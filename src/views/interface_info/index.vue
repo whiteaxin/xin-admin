@@ -1,9 +1,10 @@
+<
 <template>
   <div>
-    <router-view></router-view>
+    <div>接口管理</div>
   </div>
 </template>
 
 <script setup lang="ts"></script>
 
-<style lang="scss" scoped></style>
+<style scoped></style>

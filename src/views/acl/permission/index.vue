@@ -1,9 +1,9 @@
 <template>
   <div>
-    <router-view></router-view>
+    <p>菜单管理</p>
   </div>
 </template>
 
 <script setup lang="ts"></script>
 
-<style lang="scss" scoped></style>
+<style scoped></style>
