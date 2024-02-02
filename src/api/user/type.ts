@@ -28,13 +28,18 @@ export interface validateCodeResponse {
 
 //分页请求参数
 export interface userPageRequest {
-  current: number
-  pageSize: number
-  //排序字段
-  sortField?: string
-  sortOrder?: string
-  userAccount?: string
-  userName?: string
+  keyword: string
+  createTimeBegin: string
+  createTimeEnd: string
+}
+
+//新增用户请求参数
+export interface addUserInfoRequest{
+  username:string
+  password:string
+  name:string
+  phone:string
+  avatar:string
 }
 
 //用户信息

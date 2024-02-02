@@ -6,6 +6,7 @@ enum API {
   ADDROLE_URL = '/role/saveSysRole',
   UPDATEROLE_URL = '/role/updateSysRole',
   DELETEROLE_URL = '/role/deleteById/',
+  GETALLROLE_URL = '/role/findAllRoles/',
 }
 
 export const reqRolePageInfo = (
@@ -22,3 +23,6 @@ export const UpdateSysRole = (roleInfo: addRoleFrom) =>
 
 export const reqDeleteById = (roleId: number) =>
   request.delete(API.DELETEROLE_URL + roleId)
+
+export const GetAllRoleList = (userId:number) => 
+  request.get(API.GETALLROLE_URL+userId)
