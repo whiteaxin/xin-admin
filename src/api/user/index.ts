@@ -1,6 +1,11 @@
 import request from '@/utils/request'
-import { addUserInfoRequest, loginForm, loginResponse, userPageRequest, validateCodeResponse } from './type'
-
+import {
+  addUserInfoRequest,
+  loginForm,
+  loginResponse,
+  userPageRequest,
+  validateCodeResponse,
+} from './type'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 enum API {
@@ -13,7 +18,7 @@ enum API {
   ADDUSER_URL = '/user/saveSysUser',
   UPDATEUSER_URL = '/user/updateSysUser',
   DELETEUSER_URL = '/user/deleteById/',
-  ASSIGNROLETOUSER = '/user/doAssign'
+  ASSIGNROLETOUSER = '/user/doAssign',
 }
 
 //用户登录
@@ -31,16 +36,24 @@ export const GetUserInfo = () => request.get(API.USERINFO_URL)
 export const reqLogout = () => request.get(API.LOGOUT_URL)
 
 //分页查询用户信息
-export const GetSysUserListByPage = (pageNo:number,pageSize:number,queryDto:userPageRequest)=> request.post(API.PAGEUSERINF_URL + pageNo + "/" + pageSize,queryDto)
+export const GetSysUserListByPage = (
+  pageNo: number,
+  pageSize: number,
+  queryDto: userPageRequest,
+) => request.post(API.PAGEUSERINF_URL + pageNo + '/' + pageSize, queryDto)
 
 //新增用户
-export const saveSysUser = (data:addUserInfoRequest) => request.post(API.ADDUSER_URL,data)
+export const saveSysUser = (data: addUserInfoRequest) =>
+  request.post(API.ADDUSER_URL, data)
 
 //修改用户
-export const updateSysUser = (data:addUserInfoRequest) => request.put(API.UPDATEUSER_URL,data)
+export const updateSysUser = (data: addUserInfoRequest) =>
+  request.put(API.UPDATEUSER_URL, data)
 
 //删除用户
-export const deleteSysUserById = (userId:number) => request.delete(API.DELETEUSER_URL+userId)
+export const deleteSysUserById = (userId: number) =>
+  request.delete(API.DELETEUSER_URL + userId)
 
 //给用户分配角色
-export const DoAssignRoleToUser = (assignRoleVo:any) => request.post(API.ASSIGNROLETOUSER,assignRoleVo);
+export const DoAssignRoleToUser = (assignRoleVo: any) =>
+  request.post(API.ASSIGNROLETOUSER, assignRoleVo)

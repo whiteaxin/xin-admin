@@ -3,9 +3,26 @@ import { GetUserInfo, reqLogin } from '@/api/user'
 import { loginForm, loginResponse } from '@/api/user/type'
 import { UserState } from './types/types'
 import { GET_TOKEN, REMOVE_TOKEN, SET_TOKEN } from '@/utils/token'
-import { constantRoute } from '../../router/routes'
 import { reqLogout } from '@/api/user'
 import { ElMessage } from 'element-plus'
+//引入路由(常量路由)
+import { constantRoute, asnycRoute, anyRoute } from '@/router/routes'
+//引入深拷贝方法
+//@ts-expect-error
+import cloneDeep from 'lodash/cloneDeep'
+import router from '@/router'
+
+//用于过滤当前用户需要展示的异步路由
+function filterAsyncRoute(asnycRoute: any, routes: any) {
+  return asnycRoute.filter((item: any) => {
+    if (routes.includes(item.name)) {
+      if (item.children && item.children.length > 0) {
+        item.children = filterAsyncRoute(item.children, routes)
+      }
+      return true
+    }
+  })
+}
 
 let useUserStore = defineStore('User', {
   state: (): UserState => {
@@ -37,6 +54,17 @@ let useUserStore = defineStore('User', {
       if (result.code == 200) {
         this.name = result.data.name
         this.avatar = result.data.avatar
+         //计算当前用户需要展示的异步路由
+         const userAsyncRoute = filterAsyncRoute(
+          cloneDeep(asnycRoute),
+          result.data.menus,
+        )
+        //菜单需要的数据整理完毕
+        this.menuRoutes = [...constantRoute, ...userAsyncRoute, anyRoute];
+        //目前路由器管理的只有常量路由:用户计算完毕异步路由、任意路由动态追加
+        [...userAsyncRoute, anyRoute].forEach((route: any) => {
+          router.addRoute(route)
+        })
         return 'ok'
       } else {
         ElMessage.error(result.message)
@@ -51,6 +79,7 @@ let useUserStore = defineStore('User', {
         this.name = ''
         this.avatar = ''
         REMOVE_TOKEN()
+        router.push({ path: '/login' })
       } else {
         ElMessage.error(result.message)
       }

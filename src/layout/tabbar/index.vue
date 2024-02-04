@@ -5,20 +5,22 @@
     </div>
     <div class="tabbar_right">
       <div class="button">
-        <el-button
-          size="small"
-          icon="Refresh"
-          circle
-          @click="refresh"
-        ></el-button>
-        <el-button
-          size="small"
-          icon="FullScreen"
-          circle
-          @click="fullscreen"
-        ></el-button>
-        <el-button size="small" icon="Setting" circle></el-button>
+        <el-button size="small" icon="Refresh" circle @click="refresh"></el-button>
+        <el-button size="small" icon="FullScreen" circle @click="fullscreen"></el-button>
+
+        <!-- <el-popover placement="bottom" title="主题设置" :width="200" trigger="hover">
+          <el-form>
+            <el-form-item label="主题颜色：">
+              <el-color-picker v-model="color" show-alpha :predefine="predefineColors" size="small" />
+            </el-form-item>
+          </el-form>
+
+          <template #reference>
+            <el-button size="small" icon="Setting" circle></el-button>
+          </template>
+        </el-popover> -->
       </div>
+
       <Avatar></Avatar>
       <el-dropdown>
         <span class="el-dropdown-link">
@@ -42,11 +44,8 @@ import Avatar from './avatar/index.vue'
 import Breadcrumb from './breadcrumb/index.vue'
 import useLayOutSettingStore from '@/store/modules/setting'
 import useUserStore from '@/store/modules/user'
-import { useRouter } from 'vue-router'
-
 let LayOutSettingStore = useLayOutSettingStore()
 let useStore = useUserStore()
-let $router = useRouter()
 
 //刷新
 const refresh = () => {
@@ -67,8 +66,9 @@ const fullscreen = () => {
 //退出登录
 const logout = async () => {
   useStore.userLogout()
-  $router.push({ path: '/login' })
 }
+
+
 </script>
 
 <script lang="ts">

@@ -32,7 +32,9 @@ router.beforeEach(async (to: any, from: any, next: any) => {
         //获取用户信息
         try {
           await useStore.userInfo()
-          next()
+          //放行
+          //万一:刷新的时候是异步路由,有可能获取到用户信息、异步路由还没有加载完毕,出现空白的效果
+          next({...to})
         } catch (error) {
           useStore.name = ''
           useStore.token = ''
@@ -50,6 +52,8 @@ router.beforeEach(async (to: any, from: any, next: any) => {
       next({ path: '/login', query: { redirect: to.path } })
     }
   }
+
+  
 })
 //全部后置守卫
 router.afterEach((to: any, from: any) => {

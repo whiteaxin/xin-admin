@@ -4,11 +4,7 @@
     <div class="search-from" style="position: relative; padding-left: 10px">
       <el-form label-width="70px">
         <el-form-item label="角色名称">
-          <el-input
-            style="width: 80%"
-            placeholder="请输入角色名称"
-            v-model="queryDto.roleName"
-          ></el-input>
+          <el-input style="width: 80%" placeholder="请输入角色名称" v-model="queryDto.roleName"></el-input>
         </el-form-item>
         <el-row style="display: flex">
           <el-button type="primary" @click="searchSysRole">搜索</el-button>
@@ -24,12 +20,7 @@
 
     <!-- 添加角色表单对话框 -->
     <el-dialog v-model="dialogVisible" title="添加或修改角色" width="30%">
-      <el-form
-        label-width="120px"
-        :rules="rules"
-        :model="sysRole"
-        ref="ruleFormRef"
-      >
+      <el-form label-width="120px" :rules="rules" :model="sysRole" ref="ruleFormRef">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="sysRole.roleName" />
         </el-form-item>
@@ -51,20 +42,29 @@
       <el-table-column label="操作" align="center" width="280" #default="scope">
         <el-button type="primary" @click="editShow(scope.row)">修改</el-button>
         <el-button type="danger" @click="deleteById(scope.row)">删除</el-button>
+        <el-button type="warning" @click="showAssignMenu(scope.row)">
+          分配菜单
+        </el-button>
       </el-table-column>
     </el-table>
 
+    <!-- 分配菜单的对话框 tree组件添加ref属性，后期方便进行tree组件对象的获取-->
+    <el-dialog v-model="dialogMenuVisible" title="分配菜单" width="40%">
+      <el-form label-width="80px">
+        <el-tree :data="sysMenuTreeList" ref="tree" show-checkbox default-expand-all :check-on-click-node="true"
+          node-key="id" :props="defaultProps" />
+        <el-form-item>
+          <el-button type="primary" @click="doAssign">提交</el-button>
+          <el-button @click="dialogMenuVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
     <!--分页条-->
     <div class="page" style="margin-top: 20px">
-      <el-pagination
-        :page-sizes="[5, 10, 15, 20]"
-        layout="total, sizes, prev, pager, next"
-        :total="total"
-        v-model:current-page="pageParamsForm.page"
-        v-model:page-size="pageParamsForm.limit"
-        @size-change="fetchData"
-        @current-change="fetchData"
-      />
+      <el-pagination :page-sizes="[5, 10, 15, 20]" layout="total, sizes, prev, pager, next" :total="total"
+        v-model:current-page="pageParamsForm.page" v-model:page-size="pageParamsForm.limit" @size-change="fetchData"
+        @current-change="fetchData" />
     </div>
   </div>
 </template>
@@ -72,6 +72,8 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue'
 import {
+DoAssignMenuIdToSysRole,
+  GetSysRoleMenuIds,
   UpdateSysRole,
   reqAddRole,
   reqDeleteById,
@@ -194,6 +196,68 @@ const deleteById = (row: any) => {
       fetchData()
     }
   })
+}
+
+//******************************分配菜单**************************************** */
+const defaultProps = {
+  children: 'children',
+  label: 'title',
+}
+
+const dialogMenuVisible = ref(false)
+const sysMenuTreeList = ref([])
+
+// 树对象变量
+const tree = ref()
+
+// 默认选中的菜单数据集合
+let roleId = ref()
+
+const showAssignMenu = async (row: any) => {
+  dialogMenuVisible.value = true
+  roleId.value = row.id
+  // 请求后端地址获取所有的菜单数据，以及当前角色所对应的菜单数据
+  const { data } = await GetSysRoleMenuIds(row.id)   
+  sysMenuTreeList.value = data.sysMenuList
+  // 进行数据回显
+  tree.value.setCheckedKeys(data.roleMenuIds)   
+}
+
+const doAssign = async () => {
+  const checkedNodes = tree.value.getCheckedNodes(); // 获取选中的节点
+  const checkedNodesIds = checkedNodes.map((node: { id: any; }) => {  // 获取选中的节点的id
+    return {
+      id: node.id,
+      isHalf: 0
+    }
+  })
+
+  // 获取半选中的节点数据，当一个节点的子节点被部分选中时，该节点会呈现出半选中的状态
+  const halfCheckedNodes = tree.value.getHalfCheckedNodes();
+  const halfCheckedNodesIds = halfCheckedNodes.map((node: { id: any; }) => {   // 获取半选中节点的id
+    return {
+      id: node.id,
+      isHalf: 1
+    }
+  })
+
+  // 将选中的节点id和半选中的节点的id进行合并
+  const menuIds = [...checkedNodesIds, ...halfCheckedNodesIds]
+  console.log(menuIds);
+
+  // 构建请求数据
+  const assignMenuDto = {
+    roleId: roleId.value,
+    menuIdList: menuIds
+  }
+
+  // 发送请求
+  let result:any = await DoAssignMenuIdToSysRole(assignMenuDto);
+  if(result.code == 200){
+    ElMessage.success('操作成功')
+    dialogMenuVisible.value = false
+  }
+  
 }
 </script>
 

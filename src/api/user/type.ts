@@ -34,12 +34,12 @@ export interface userPageRequest {
 }
 
 //新增用户请求参数
-export interface addUserInfoRequest{
-  username:string
-  password:string
-  name:string
-  phone:string
-  avatar:string
+export interface addUserInfoRequest {
+  username: string
+  password: string
+  name: string
+  phone: string
+  avatar: string
 }
 
 //用户信息

@@ -23,6 +23,9 @@ dependencies:
   element-plus:
     specifier: ^2.5.3
     version: 2.5.3(vue@3.4.15)
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   nprogress:
     specifier: ^0.2.0
     version: 0.2.0
